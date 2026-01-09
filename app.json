@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "Photo3D",
+    "slug": "photo3d",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1a1a2e"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.photo3d.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Photo3D needs camera access to capture photos for 3D model generation",
+        "NSPhotoLibraryUsageDescription": "Photo3D needs photo library access to select photos for 3D model generation",
+        "NSPhotoLibraryAddUsageDescription": "Photo3D needs permission to save generated 3D models"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1a1a2e"
+      },
+      "package": "com.photo3d.app",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Photo3D to access your camera for capturing photos"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Photo3D to access your photos for 3D model generation"
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow Photo3D to save generated 3D models",
+          "savePhotosPermission": "Allow Photo3D to save photos"
+        }
+      ]
+    ]
+  }
+}
