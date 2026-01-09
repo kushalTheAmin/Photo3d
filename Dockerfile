@@ -14,11 +14,14 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy backend files
-COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy all files first
+COPY . .
 
-COPY backend/ .
+# Install Python dependencies
+RUN pip install --no-cache-dir -r backend/requirements.txt
+
+# Move to backend directory for runtime
+WORKDIR /app/backend
 
 # Create directories for uploads and models
 RUN mkdir -p uploads models

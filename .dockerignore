@@ -1,0 +1,9 @@
+# Ignore development files
+node_modules/
+.expo/
+.git/
+*.md
+.env
+.env.*
+
+# Keep backend for build
