@@ -224,3 +224,11 @@ MIT License - see [LICENSE](LICENSE) for details.
 - [Three.js](https://threejs.org/) for 3D rendering
 - [Expo](https://expo.dev/) for React Native tooling
 - [FastAPI](https://fastapi.tiangolo.com/) for backend framework
+
+## Also in this repo: Universal Play (video play browser)
+
+[`video-player/`](video-player/) is a separate web app: paste any video link or webpage URL and it plays it (direct files, HLS, DASH, YouTube/Vimeo/Twitch/Dailymotion/Streamable embeds, and a sandboxed browser with a video sniffer). See [`video-player/README.md`](video-player/README.md) for setup:
+
+```bash
+cd video-player && npm install && npm run dev   # http://localhost:5173
+```

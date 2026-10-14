@@ -1,0 +1,42 @@
+{
+  "name": "universal-video-play-browser",
+  "version": "1.0.0",
+  "description": "Paste any video link or webpage URL and play it: direct files, HLS, DASH, platform embeds and a sandboxed sniffer browser.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n server,web -c cyan,magenta \"npm:dev:server\" \"npm:dev:web\"",
+    "dev:server": "node --watch server/index.js",
+    "dev:web": "vite",
+    "build": "tsc -b && vite build",
+    "start": "NODE_ENV=production node server/index.js",
+    "typecheck": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "dashjs": "4.7.4",
+    "express": "4.22.3",
+    "hls.js": "1.5.20",
+    "lucide-react": "0.460.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "zustand": "4.5.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "@types/react": "18.3.31",
+    "@types/react-dom": "18.3.7",
+    "@vitejs/plugin-react": "4.7.0",
+    "autoprefixer": "10.4.20",
+    "concurrently": "9.2.5",
+    "jsdom": "25.0.1",
+    "postcss": "8.4.49",
+    "tailwindcss": "3.4.19",
+    "typescript": "5.9.3",
+    "vite": "5.4.21",
+    "vitest": "2.1.9"
+  }
+}

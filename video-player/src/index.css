@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-cinema-950 font-sans text-white antialiased;
+    color-scheme: dark;
+  }
+  ::selection {
+    @apply bg-accent/40;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+  }
+}
+
+@layer components {
+  .kbd {
+    @apply inline-flex min-w-[1.6rem] items-center justify-center rounded-md border border-white/15 bg-white/5 px-1.5 py-0.5 font-mono text-[11px] text-white/80;
+  }
+}
+
+/* Volume slider: white fill to 100%, accent fill in the boost zone. */
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    #fff 0,
+    #fff min(var(--fill), var(--boost)),
+    #e5484d min(var(--fill), var(--boost)),
+    #e5484d var(--fill),
+    rgba(255, 255, 255, 0.2) var(--fill)
+  );
+}
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 12px;
+  width: 12px;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.25);
+}
+.volume-slider::-moz-range-thumb {
+  height: 12px;
+  width: 12px;
+  border: 0;
+  border-radius: 9999px;
+  background: #fff;
+}
+
+/* Native caption styling for a cinema look. */
+video::cue {
+  background: rgba(0, 0, 0, 0.72);
+  color: #fff;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 1.05em;
+  line-height: 1.35;
+}
