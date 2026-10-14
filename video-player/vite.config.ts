@@ -6,6 +6,8 @@ const SERVER_PORT = Number(process.env.PORT ?? 8787);
 export default defineConfig({
   plugins: [react()],
   server: {
+    // Listen on all interfaces so phones/tablets on the same Wi-Fi can connect.
+    host: true,
     port: 5173,
     proxy: {
       '/api': {
@@ -13,6 +15,9 @@ export default defineConfig({
         changeOrigin: false,
       },
     },
+  },
+  preview: {
+    host: true,
   },
   build: {
     outDir: 'dist',

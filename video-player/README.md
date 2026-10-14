@@ -29,6 +29,15 @@ Open **http://localhost:5173**. `npm run dev` starts two processes:
 - the Vite dev server on `:5173`, which forwards `/api/*` to the proxy, and
 - the proxy server on `:8787`, which restarts when you edit a file.
 
+### On a phone or tablet (same Wi-Fi)
+
+Both `npm run dev` and `npm start` listen on all network interfaces. Find your computer's local IP (`ipconfig` on Windows, `ipconfig getifaddr en0` on macOS, `hostname -I` on Linux) and open it on the phone:
+
+- dev: `http://<computer-ip>:5173` (Vite also prints this as the "Network" URL)
+- production: `http://<computer-ip>:8787`
+
+Allow the port through your computer's firewall if the page doesn't load. Clipboard reading needs HTTPS on a phone, so over plain HTTP long-press paste into the URL bar instead of using **Paste & Play**.
+
 ### Production
 
 ```bash
