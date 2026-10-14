@@ -47,6 +47,24 @@ npm start            # one Node process serves dist/ and /api on :8787
 
 Open **http://localhost:8787**.
 
+### Deploy to Render (open it on your phone from anywhere)
+
+The repo includes a Render Blueprint at `video-player/render.yaml` (free plan, Node 22, HTTPS URL).
+
+1. Sign in at [render.com](https://render.com) and connect your GitHub account.
+2. Click **New → Blueprint** and pick the `Photo3d` repository.
+3. Set **Blueprint Path** to `video-player/render.yaml`. Leave the branch on the one that has `video-player/`, or merge it into `main` first.
+4. Click **Apply**. The first build takes about 3–5 minutes.
+5. Open the `universal-play` service → **Environment** → reveal **APP_PASSWORD** (Render generated it). You can replace it with your own.
+6. Open `https://universal-play-xxxx.onrender.com` on your phone. Enter **any username** and that password. The browser remembers it.
+
+Notes:
+- The free plan sleeps after about 15 minutes idle. The first visit afterwards takes roughly 30–60 seconds to wake up.
+- Because the URL is HTTPS, **Paste & Play** (clipboard access) works on phones.
+- On a phone, use **Share → Add to Home Screen** to get an app-like icon.
+- `APP_PASSWORD` keeps strangers from using your server as an open proxy. Don't remove it on a public deployment.
+- If you'd rather not use a Blueprint: **New → Web Service**, root directory `video-player`, build command `npm ci --include=dev && npm run build`, start command `npm start`, health check `/api/health`, plus the `APP_PASSWORD` env var.
+
 ### Docker
 
 ```bash
@@ -57,7 +75,7 @@ docker run -p 8787:8787 universal-play
 ### Tests
 
 ```bash
-npm test             # 50 unit + integration tests (detection, subtitles, diagnostics, proxy server)
+npm test             # 53 unit + integration tests (detection, subtitles, diagnostics, proxy server)
 npm run typecheck
 ```
 
@@ -75,6 +93,7 @@ Copy `.env.example` to `.env`, or set these variables in your shell:
 | `ALLOW_PRIVATE_NETWORKS` | `0` | Set to `1` so the proxy can reach LAN or localhost media (Jellyfin, Plex, a NAS). **Leave it at `0` on anything internet-facing.** |
 | `MAX_TEXT_BYTES` | `8388608` | Largest manifest or HTML page the proxy will buffer for rewriting or sniffing |
 | `UPSTREAM_TIMEOUT_MS` | `20000` | Timeout for upstream requests |
+| `APP_PASSWORD` | *(empty)* | Password-protects the whole app with HTTP Basic Auth (any username). **Set this on any public deployment.** `/api/health` stays open for health checks. |
 | `VITE_PROXY_BASE` | `/api` | Build-time default proxy endpoint, for when the frontend is hosted separately from the proxy. You can also change it at runtime in **Advanced Stream Options**. |
 
 ---
@@ -181,7 +200,7 @@ Things to know about the design:
 - Without `ALLOW_PRIVATE_NETWORKS=1`, the proxy refuses loopback, private, link-local, CGNAT and multicast addresses. The check runs inside the socket's DNS `lookup` on every connection and redirect hop, so DNS rebinding cannot get around it.
 - Only `http:` and `https:` targets are allowed. Hop-by-hop headers and CRLF characters are removed from custom headers.
 - Proxied pages are sandboxed twice, by the iframe `sandbox` attribute and by a CSP `sandbox` response header, so they cannot read app storage or reach the parent window.
-- The proxy relays whatever it is asked to fetch. On a public deployment, put it behind authentication or rate limiting.
+- The proxy relays whatever it is asked to fetch. On a public deployment, set `APP_PASSWORD` (the Render Blueprint generates one) so it isn't an open relay.
 
 ## Limitations
 

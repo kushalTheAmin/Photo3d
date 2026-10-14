@@ -2,6 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
+import { basicAuth } from './auth.js';
 import { config } from './config.js';
 import { handleOEmbed, handlePage, handleProbe, handleProxy, handleSniff } from './routes.js';
 
@@ -9,6 +10,7 @@ export function createApp({ serveStatic = true } = {}) {
   const app = express();
   app.disable('x-powered-by');
   app.set('trust proxy', true);
+  if (config.appPassword) app.use(basicAuth(config.appPassword));
 
   app.options('/api/*', (_req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -41,5 +43,6 @@ if (isEntryPoint) {
   createApp().listen(config.port, () => {
     console.log(`[uvp] proxy server listening on http://localhost:${config.port}`);
     if (config.allowPrivateNetworks) console.log('[uvp] private network access ENABLED');
+    if (config.appPassword) console.log('[uvp] password protection ENABLED');
   });
 }

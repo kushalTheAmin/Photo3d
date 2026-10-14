@@ -19,6 +19,7 @@ loadDotEnv();
 export const config = {
   port: Number(process.env.PORT ?? 8787),
   production: process.env.NODE_ENV === 'production',
+  appPassword: process.env.APP_PASSWORD ?? '',
   allowPrivateNetworks: process.env.ALLOW_PRIVATE_NETWORKS === '1',
   maxTextBytes: Number(process.env.MAX_TEXT_BYTES ?? 8 * 1024 * 1024),
   upstreamTimeoutMs: Number(process.env.UPSTREAM_TIMEOUT_MS ?? 20000),
