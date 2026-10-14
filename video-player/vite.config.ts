@@ -4,6 +4,8 @@ import react from '@vitejs/plugin-react';
 const SERVER_PORT = Number(process.env.PORT ?? 8787);
 
 export default defineConfig({
+  // GitHub Pages serves the app from /<repo>/; set VITE_BASE=/Photo3d/ for that build.
+  base: process.env.VITE_BASE ?? '/',
   plugins: [react()],
   server: {
     // Listen on all interfaces so phones/tablets on the same Wi-Fi can connect.

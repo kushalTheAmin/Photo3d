@@ -47,6 +47,17 @@ npm start            # one Node process serves dist/ and /api on :8787
 
 Open **http://localhost:8787**.
 
+### Free on GitHub Pages (no server, no card; works from an iPhone)
+
+`.github/workflows/video-player-pages.yml` builds a **static** version and publishes it to `https://<user>.github.io/<repo>/` whenever `video-player/` changes on `main`.
+
+One-time setup (it works from a phone browser): open the repo on github.com → **Settings → Pages → Build and deployment → Source: GitHub Actions**. Then re-run the workflow from the **Actions** tab, or push any change.
+
+The static build has no proxy server, so it runs in **static mode**:
+- ✅ Direct video files, HLS/DASH streams whose servers allow CORS, YouTube/Vimeo/Twitch/Dailymotion/Streamable embeds, local files, subtitles, history, resume, playlists and every player control.
+- ❌ Custom headers, the CORS proxy, volume boost on non-CORS files, and the video sniffer. Webpages open in the direct sandboxed iframe, and error screens offer only the fallbacks that work without a server.
+- To get the full feature set, point **Advanced Stream Options → Proxy endpoint** at a server you run elsewhere.
+
 ### Deploy to Render (open it on your phone from anywhere)
 
 The repo includes a Render Blueprint at `video-player/render.yaml` (free plan, Node 22, HTTPS URL).

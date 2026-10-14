@@ -111,3 +111,11 @@ describe('platform parsing', () => {
     expect(parseTimestamp('nope')).toBeUndefined();
   });
 });
+
+describe('detectSource without a server', () => {
+  it('opens unknown links in the direct iframe instead of the proxied browser', async () => {
+    expect((await detectSource('https://a.com/page', 'auto', async () => null, 'web-direct')).mode).toBe('web-direct');
+    expect((await detectSource('https://a.com/page', 'web', async () => null, 'web-direct')).mode).toBe('web-direct');
+    expect((await detectSource('https://a.com/v.m3u8', 'auto', async () => null, 'web-direct')).mode).toBe('hls');
+  });
+});

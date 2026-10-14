@@ -13,25 +13,25 @@ export function ErrorOverlay({ diagnosis, diagnosing, onAction }: ErrorOverlayPr
   const [showTechnical, setShowTechnical] = useState(false);
   if (!diagnosis && !diagnosing) return null;
   return (
-    <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-fade-in" onClick={(event) => event.stopPropagation()}>
+    <div className="absolute inset-0 z-30 flex items-start justify-center overflow-y-auto bg-black/85 p-2 backdrop-blur-sm animate-fade-in sm:items-center sm:p-4" onClick={(event) => event.stopPropagation()}>
       {diagnosing || !diagnosis ? (
         <div className="flex items-center gap-3 text-white/80">
           <Loader2 className="h-5 w-5 animate-spin" />
           Diagnosing playback failure…
         </div>
       ) : (
-        <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-cinema-900/95 p-5 shadow-2xl">
+        <div className="my-auto w-full max-w-lg rounded-2xl border border-white/10 bg-cinema-900/95 p-3 shadow-2xl sm:p-5">
           <div className="flex items-start gap-3">
-            <div className="rounded-full bg-accent/15 p-2 text-accent">
+            <div className="hidden rounded-full bg-accent/15 p-2 text-accent sm:block">
               <AlertTriangle className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold uppercase tracking-wider text-accent-soft">{diagnosis.code.replace('-', ' ')}</p>
-              <h3 className="text-lg font-semibold text-white">{diagnosis.title}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-white/70">{diagnosis.detail}</p>
+              <h3 className="text-base font-semibold text-white sm:text-lg">{diagnosis.title}</h3>
+              <p className="mt-1 text-xs leading-relaxed text-white/70 sm:text-sm">{diagnosis.detail}</p>
             </div>
           </div>
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2 sm:mt-4">
             {diagnosis.actions.map((action, index) => (
               <button
                 key={action}
@@ -43,7 +43,7 @@ export function ErrorOverlay({ diagnosis, diagnosing, onAction }: ErrorOverlayPr
               </button>
             ))}
           </div>
-          <button type="button" onClick={() => setShowTechnical((value) => !value)} className="mt-4 flex items-center gap-1 text-xs text-white/40 hover:text-white/70">
+          <button type="button" onClick={() => setShowTechnical((value) => !value)} className="mt-3 hidden sm:mt-4 sm:flex items-center gap-1 text-xs text-white/40 hover:text-white/70">
             <ChevronDown className={`h-3.5 w-3.5 transition ${showTechnical ? 'rotate-180' : ''}`} /> Technical details
           </button>
           {showTechnical && <pre className="mt-2 whitespace-pre-wrap break-all rounded-lg bg-black/50 p-2 font-mono text-[11px] text-white/60">{diagnosis.technical}</pre>}

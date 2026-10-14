@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { openUrl, runServerSniff } from '../lib/controller';
 import { normalizeInput } from '../lib/detect';
 import { hostOf } from '../lib/format';
-import { buildPageUrl } from '../lib/proxy';
+import { buildPageUrl, proxyEnabled } from '../lib/proxy';
 import type { ModeOverride, SniffCandidate, Source } from '../lib/types';
 import { useLibrary } from '../store/library';
 import { useSession } from '../store/session';
@@ -39,6 +39,7 @@ export function BrowserView({ source }: { source: Source }) {
   const [loading, setLoading] = useState(true);
   const [address, setAddress] = useState(source.url);
   const proxied = source.mode === 'web';
+  const serverAvailable = proxyEnabled(proxyBase);
   const current = nav.stack[nav.index];
   const frameSrc = proxied ? buildPageUrl(current, source.headers, proxyBase) : current;
 
@@ -125,20 +126,20 @@ export function BrowserView({ source }: { source: Source }) {
           <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-400" aria-label="Sandboxed" />
           <input value={address} onChange={(event) => setAddress(event.target.value)} className="min-w-0 flex-1 bg-transparent font-mono text-xs text-white/80 outline-none" spellCheck={false} aria-label="Page address" />
         </form>
-        <div className="hidden overflow-hidden rounded-md border border-white/10 text-[11px] sm:flex">
+        {serverAvailable && <div className="hidden overflow-hidden rounded-md border border-white/10 text-[11px] sm:flex">
           <button type="button" onClick={() => !proxied && void openUrl(current, { mode: 'web' })} className={`px-2 py-1 ${proxied ? 'bg-white/15 text-white' : 'text-white/50 hover:text-white'}`} title="Load through the proxy with the live video sniffer">
             Proxied + Sniffer
           </button>
           <button type="button" onClick={() => proxied && void openUrl(current, { mode: 'web-direct' })} className={`px-2 py-1 ${!proxied ? 'bg-white/15 text-white' : 'text-white/50 hover:text-white'}`} title="Frame the real site directly (works when a site allows embedding)">
             Direct
           </button>
-        </div>
-        <button type="button" onClick={extract} className="relative ml-1 flex items-center gap-1.5 rounded-md bg-accent px-2.5 py-1 text-xs font-semibold text-white hover:bg-accent-soft">
+        </div>}
+        {serverAvailable && <button type="button" onClick={extract} className="relative ml-1 flex items-center gap-1.5 rounded-md bg-accent px-2.5 py-1 text-xs font-semibold text-white hover:bg-accent-soft">
           <ScanSearch className="h-3.5 w-3.5" />
           <span className="hidden md:inline">Extract / Sniff Video</span>
           <span className="md:hidden">Sniff</span>
           {sniff.items.length > 0 && <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-accent">{sniff.items.length}</span>}
-        </button>
+        </button>}
         <a href={current} target="_blank" rel="noopener noreferrer" className="rounded-md p-1.5 text-white/60 hover:bg-white/10 hover:text-white" aria-label="Open in new tab">
           <ExternalLink className="h-4 w-4" />
         </a>
@@ -157,7 +158,13 @@ export function BrowserView({ source }: { source: Source }) {
         />
         {!proxied && (
           <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-3 pb-2 pt-6 text-[11px] text-white/70">
-            Direct mode: if the page stays blank the site forbids framing — switch to <b>Proxied + Sniffer</b>. Live network sniffing is only available in proxied mode; Extract still scans the page server-side.
+            {serverAvailable ? (
+              <>
+                Direct mode: if the page stays blank the site forbids framing — switch to <b>Proxied + Sniffer</b>. Live network sniffing is only available in proxied mode; Extract still scans the page server-side.
+              </>
+            ) : (
+              <>If the page stays blank the site forbids framing — open it with the ↗ button. Video sniffing needs the server version of this app.</>
+            )}
           </div>
         )}
         <SniffPanel onRescan={extract} />

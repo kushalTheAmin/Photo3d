@@ -6,9 +6,9 @@ import type { PlaybackEngine } from '../../engines/types';
 import { checkProxyHealth, probeUrl } from '../../lib/api';
 import { AudioBoost } from '../../lib/audioBoost';
 import { applyRecovery, playNextInPlaylist } from '../../lib/controller';
-import { diagnose } from '../../lib/diagnostics';
+import { diagnose, withoutServer } from '../../lib/diagnostics';
 import { formatTime } from '../../lib/format';
-import { buildProxyUrl } from '../../lib/proxy';
+import { buildProxyUrl, proxyEnabled } from '../../lib/proxy';
 import { parseSubtitles, toVttCue, type ParsedCue } from '../../lib/subtitles';
 import type { AspectMode, Diagnosis, EngineError, RecoveryAction, Source, SubtitleTrackInfo } from '../../lib/types';
 import { useLibrary } from '../../store/library';
@@ -123,7 +123,8 @@ export const VideoPlayer = forwardRef<PlayerHandle, { source: Source }>(function
       const proxyBase = useLibrary.getState().settings.proxyBase;
       const probe = source.local ? null : await probeUrl(source.url, source.headers, proxyBase);
       const proxyReachable = probe !== null || (await checkProxyHealth(proxyBase));
-      const result = diagnose(source, error, probe, proxyReachable);
+      const diagnosed = diagnose(source, error, probe, proxyReachable);
+      const result = proxyEnabled(proxyBase) ? diagnosed : withoutServer(diagnosed);
       setDiagnosing(false);
       if (useLibrary.getState().settings.autoProxyOnFailure && !source.useProxy && proxyReachable && result.actions.includes('enable-proxy')) {
         toast(`${result.title} — retrying through the proxy`, 'info');
@@ -424,7 +425,8 @@ export const VideoPlayer = forwardRef<PlayerHandle, { source: Source }>(function
     window.clearTimeout(hideTimer.current);
     hideTimer.current = window.setTimeout(() => setControlsActive(false), 2600);
   }, []);
-  const controlsVisible = controlsActive || !playing || menuOpen || scrubbing || Boolean(diagnosis);
+  const showingError = Boolean(diagnosis) || diagnosing;
+  const controlsVisible = !showingError && (controlsActive || !playing || menuOpen || scrubbing);
 
   const onSurfaceClick = () => {
     if (menuOpen) {
@@ -464,7 +466,7 @@ export const VideoPlayer = forwardRef<PlayerHandle, { source: Source }>(function
   return (
     <div
       ref={containerRef}
-      className={`group/player relative w-full select-none overflow-hidden bg-black ${isFullscreen ? 'h-full' : theater ? 'h-[calc(100vh-8.5rem)] min-h-[320px]' : 'aspect-video max-h-[75vh] rounded-xl'} ${controlsVisible ? '' : 'cursor-none'}`}
+      className={`group/player relative w-full select-none overflow-hidden bg-black ${isFullscreen ? 'h-full' : theater ? 'h-[calc(100vh-8.5rem)] min-h-[320px]' : 'aspect-video max-h-[75vh] rounded-xl'} ${showingError ? 'min-h-[340px]' : ''} ${controlsVisible || showingError ? '' : 'cursor-none'}`}
       onPointerMove={poke}
       onPointerDown={poke}
       onMouseLeave={() => playing && setControlsActive(false)}

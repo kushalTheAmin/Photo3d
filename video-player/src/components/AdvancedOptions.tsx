@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { checkProxyHealth } from '../lib/api';
 import { reopenCurrent } from '../lib/controller';
 import { MODE_LABEL } from '../lib/detect';
-import { EMPTY_HEADERS, hasCustomHeaders } from '../lib/proxy';
+import { EMPTY_HEADERS, hasCustomHeaders, proxyEnabled } from '../lib/proxy';
 import type { ModeOverride, StreamHeaders } from '../lib/types';
 import { useLibrary } from '../store/library';
 import { useSession } from '../store/session';
@@ -78,6 +78,11 @@ export function AdvancedOptions() {
 
   return (
     <section className="z-20 max-h-[70vh] animate-slide-up overflow-y-auto border-b border-white/5 bg-cinema-850/95 backdrop-blur" aria-label="Advanced stream options">
+      {!proxyEnabled(settings.proxyBase) && (
+        <p className="mx-auto max-w-6xl px-4 pt-4 text-xs text-amber-300/90">
+          Static mode (no server): custom headers, the CORS proxy and the video sniffer are unavailable. Direct files, CORS-enabled HLS/DASH streams and platform embeds still work. Enter a proxy endpoint below if you run the server somewhere.
+        </p>
+      )}
       <div className="mx-auto grid max-w-6xl gap-6 px-4 py-4 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <div className="mb-3 flex items-center justify-between">
@@ -175,9 +180,9 @@ export function AdvancedOptions() {
           <Toggle checked={settings.autoResume} onChange={(value) => updateSettings({ autoResume: value })} label="Resume where I left off" description="Remember the timestamp of every link in history." />
           <Toggle checked={settings.autoAdvance} onChange={(value) => updateSettings({ autoAdvance: value })} label="Auto-advance playlists" description="Play the next playlist item when one finishes." />
           <div className="pt-2">
-            <Field label="Proxy endpoint" hint="default /api">
+            <Field label="Proxy endpoint" hint="empty = static mode">
               <div className="flex items-center gap-2">
-                <input className={inputClass} value={settings.proxyBase} onChange={(event) => updateSettings({ proxyBase: event.target.value || '/api' })} placeholder="/api or https://my-proxy.example.com/api" />
+                <input className={inputClass} value={settings.proxyBase} onChange={(event) => updateSettings({ proxyBase: event.target.value.trim() })} placeholder="empty = no server · /api · https://my-proxy.example.com/api" />
                 <button type="button" onClick={() => void recheck()} className="flex shrink-0 items-center gap-1 text-xs" title="Check proxy health">
                   {checking ? (
                     <Loader2 className="h-4 w-4 animate-spin text-white/60" />

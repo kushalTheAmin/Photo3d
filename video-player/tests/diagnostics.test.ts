@@ -50,3 +50,14 @@ describe('diagnose', () => {
     expect(d.code).toBe('webpage');
   });
 });
+
+describe('withoutServer (static mode)', () => {
+  it('drops proxy recoveries and offers the direct fallbacks', async () => {
+    const { withoutServer } = await import('../src/lib/diagnostics');
+    const d = withoutServer(diagnose(base, { kind: 'network', detail: '' }, null, false));
+    expect(d.actions).not.toContain('enable-proxy');
+    expect(d.actions).toContain('open-web-direct');
+    expect(d.actions).toContain('open-external');
+    expect(d.detail).toMatch(/static/);
+  });
+});
